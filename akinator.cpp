@@ -1,10 +1,5 @@
-
-
 #include "akinator.h"
 #include "dump.h"
-
-#define Guesss
-
 
 int main()
 {
@@ -15,45 +10,39 @@ int main()
         return -1;
     }
     NODE_T* root = read_tree(NULL, file);
-    printf("%x\n", root);
     fclose(file);
-
-
-    GraphicDump(root);
-
-
-    #ifdef DEFINITION
-
-    DEFINITION_T* definition = (DEFINITION_T*) calloc(1, sizeof(DEFINITION_T));
-    print_defenition(root, definition);
-    #endif
-    
-    #ifdef Guesss
-    Guess(root);
-    #endif
-
-    #ifdef different
-    different_definition(root);
-    #endif
     printf("%x\n", root);
-    printf_txt((NODE_T*) root);
+
+    GraphicDump(root);
+    printf("Enter \n 1 if you want play akinator \n 2 if you want definition \n 3 if you want different\n");
+
+    char start_code;
+    scanf("%c", &start_code);
+    if (start_code == '1')
+    {
+        Guesss;    
+    }
+    else if (start_code == '2')
+    {
+        DEFINITION;
+    }
+    else if (start_code == '3')
+    {
+        different;
+    }
 
     GraphicDump(root);
 
-   
+    FILE* file_ptr = fopen("akinator.txt", "w");
+    printf_txt(root, file_ptr);
 
+    GraphicDump(root);
+
+    fclose(file_ptr);
+
+    tree_destroy(root);
 }
 
-/*NODE_T* make_node_null()
-{
-    NODE_T* node = (NODE_T*) calloc(1, sizeof(NODE_T));
-    node->left   = NULL;
-    node->right  = NULL;
-    node->parent = NULL;
-    node->data   = NULL;
-    return node;
-
-}*/
 
 NODE_T* create_node(NODE_T* parent, char* txt)
 {
@@ -81,7 +70,7 @@ NODE_T* read_tree(NODE_T* parent, FILE* file)
     {
         char node_name[MAX_STRING_SIZE] = {};
 
-        fscanf(file,  "%[^}\n]", node_name);
+        fscanf(file, "\"%[^\"]\"", node_name);
 
         NODE_T* node = create_node(parent, node_name);
 
@@ -137,8 +126,7 @@ int Guess(NODE_T* node)
     {
         if (node->right == NULL)
         {
-            printf("pupupu");
-            draw_tree(node);
+            new_node_tree(node);
             return 0;
         }
         return Guess(node->right);
@@ -187,8 +175,6 @@ int search_word(NODE_T* node, char word[MAX_STRING_SIZE], DEFINITION_T* definiti
 
 void print_defenition(NODE_T* node, DEFINITION_T* definition)
 {
-
-
     printf("WORD:\n");
     char word[MAX_STRING_SIZE];
     scanf("%s", &word);
@@ -254,10 +240,8 @@ void different_definition(NODE_T* root)
     }
 } 
 
-int draw_tree(NODE_T* parent)
+int new_node_tree(NODE_T* parent)
 {
-
-
     printf("Please enter question\n");
     char question[MAX_STRING_SIZE] = {};
     scanf("%s", &question);
@@ -273,27 +257,26 @@ int draw_tree(NODE_T* parent)
     parent->parent->right->right = parent;
     
     return 1;
-
-
 }
 
-void printf_txt(NODE_T* node)
+void printf_txt(NODE_T* node, FILE* rewrite)
 {
-    FILE* file_ptr = fopen("akinator_write.txt","w");
-    fprintf(file_ptr, "{\n");
-    /*fprintf(file_ptr, "%s ", node->data);
-    if (node-> right == NULL && node->left == NULL)
+    if(node == NULL)
     {
-        fprintf(file_ptr, "} \n    ");
+        return;
+    }
 
-    }
-    if (node->left != NULL)
-    {
-        printf_txt(node->left);
-    }
-    if (node->right != NULL)
-    {
-        printf_txt(node->right);
-    }
-    fprintf(file_ptr, "}\n");*/
+    fprintf(rewrite, "{\"%s\"", node->data);
+
+    printf_txt(node->left, rewrite);
+    printf_txt(node->right, rewrite);
+
+    fprintf(rewrite, "}");
+}
+
+void tree_destroy(NODE_T* node)
+{
+    tree_destroy(node->left);
+    tree_destroy(node->right);
+    free(node);
 }

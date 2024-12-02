@@ -7,6 +7,12 @@
 #include <assert.h>
 #include <math.h>
 
+#define Guesss Guess(root)
+
+#define DEFINITION DEFINITION_T* definition = (DEFINITION_T*) calloc(1, sizeof(DEFINITION_T)); print_defenition(root, definition)
+
+#define different different_definition(root)
+
 enum answer
 {
     YES             = 1,
@@ -42,8 +48,10 @@ int search_word(NODE_T* node, char word[MAX_STRING_SIZE], DEFINITION_T* defeniti
 
 void different_definition(NODE_T* root);
 
-int draw_tree(NODE_T* parent);
+int new_node_tree(NODE_T* parent);
 
-void printf_txt(NODE_T* node);
+void printf_txt(NODE_T* node, FILE* file_ptr);
+
+void tree_destroy(NODE_T* node);
 
 #endif
